@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>French Verb Trainer</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+* {
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+}
+
+body {
+  margin: 0;
+  background: linear-gradient(135deg, #1d2671, #c33764);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
+
+.app {
+  width: 95%;
+  max-width: 900px;
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(12px);
+  border-radius: 18px;
+  padding: 25px;
+}
+
+h1 {
+  text-align: center;
+}
+
+#menu {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+button {
+  border: none;
+  border-radius: 10px;
+  padding: 10px 18px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.card {
+  background: rgba(0,0,0,0.3);
+  padding: 20px;
+  border-radius: 14px;
+  transition: 0.3s;
+}
+
+.correct-bg { background: rgba(0,255,0,0.4) !important; }
+.wrong-bg { background: rgba(255,0,0,0.4) !important; }
+
+#question {
+  text-align: center;
+  font-size: 28px;
+  margin-bottom: 15px;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  margin-bottom: 10px;
+  text-align: center;
+  font-size: 18px;
+}
+
+.controls {
+  display: flex;
+  gap: 10px;
+}
+
+.option {
+  width: 100%;
+  margin: 6px 0;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+.hidden { display: none; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  color: black;
+  margin-bottom: 20px;
+}
+
+td, th {
+  border: 1px solid #ccc;
+  padding: 6px;
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <h1>French Present Tense Trainer</h1>
+
+  <div id="menu">
+    <div>
+      <button onclick="showQuiz()">Quiz</button>
+      <button onclick="showStudy()">Study</button>
+      <button onclick="toggleMode()" id="modeBtn">Mode: Writing</button>
+    </div>
+  </div>
+
+  <div id="quiz" class="card">
+    <h2 id="question"></h2>
+
+    <div id="writingMode">
+      <input id="answer" placeholder="Type the conjugation">
+      <div class="controls">
+        <button onclick="checkAnswer()">Check</button>
+        <button onclick="newQuestion()">Next</button>
+      </div>
+    </div>
+
+    <div id="choiceMode" class="hidden"></div>
+  </div>
+
+  <div id="study" class="card hidden"></div>
+</div>
+
+<script>
+const pronouns = ["Je","Tu","Il/Elle","Nous","Vous","Ils/Elles"];
+
+const verbs = {
+  "aller": ["vais","vas","va","allons","allez","vont"],
+  "avoir": ["ai","as","a","avons","avez","ont"],
+  "boire": ["bois","bois","boit","buvons","buvez","boivent"],
+  "connaître": ["connais","connais","connaît","connaissons","connaissez","connaissent"],
+  "croire": ["crois","crois","croit","croyons","croyez","croient"],
+  "devoir": ["dois","dois","doit","devons","devez","doivent"],
+  "écrire": ["écris","écris","écrit","écrivons","écrivez","écrivent"],
+  "entendre": ["entends","entends","entend","entendons","entendez","entendent"],
+  "faire": ["fais","fais","fait","faisons","faites","font"],
+  "dire": ["dis","dis","dit","disons","dites","disent"],
+  "mettre": ["mets","mets","met","mettons","mettez","mettent"],
+  "ouvrir": ["ouvre","ouvres","ouvre","ouvrons","ouvrez","ouvrent"],
+  "partir": ["pars","pars","part","partons","partez","partent"],
+  "pouvoir": ["peux","peux","peut","pouvons","pouvez","peuvent"],
+  "prendre": ["prends","prends","prend","prenons","prenez","prennent"],
+  "savoir": ["sais","sais","sait","savons","savez","savent"],
+  "suivre": ["suis","suis","suit","suivons","suivez","suivent"],
+  "venir": ["viens","viens","vient","venons","venez","viennent"],
+  "voir": ["vois","vois","voit","voyons","voyez","voient"],
+  "vouloir": ["veux","veux","veut","voulons","voulez","veulent"],
+  "être": ["suis","es","est","sommes","êtes","sont"]
+};
+
+let currentVerb, currentPerson;
+let mode = "write";
+
+function newQuestion() {
+  const v = Object.keys(verbs);
+  currentVerb = v[Math.floor(Math.random()*v.length)];
+  currentPerson = Math.floor(Math.random()*6);
+
+  document.getElementById("quiz").classList.remove("correct-bg","wrong-bg");
+  document.getElementById("question").textContent =
+    `${pronouns[currentPerson]} → ${currentVerb}`;
+
+  document.getElementById("answer").value = "";
+
+  if (mode === "choice") generateChoices();
+}
+
+function checkAnswer() {
+  validate(document.getElementById("answer").value.trim().toLowerCase());
+}
+
+document.addEventListener("keydown", function(e) {
+  if (e.key === "Enter" && mode === "write") {
+    checkAnswer();
+  }
+});
+
+function validate(input) {
+  const correct = verbs[currentVerb][currentPerson];
+  const box = document.getElementById("quiz");
+
+  box.classList.remove("correct-bg","wrong-bg");
+
+  if (input === correct) {
+    box.classList.add("correct-bg");
+    setTimeout(newQuestion, 1000);
+  } else {
+    box.classList.add("wrong-bg");
+  }
+}
+
+function generateChoices() {
+  const box = document.getElementById("choiceMode");
+  box.innerHTML = "";
+
+  let options = [verbs[currentVerb][currentPerson]];
+
+  while (options.length < 4) {
+    const randomForm = verbs[currentVerb][Math.floor(Math.random()*6)];
+    if (!options.includes(randomForm)) options.push(randomForm);
+  }
+
+  options.sort(() => Math.random() - 0.5);
+
+  options.forEach(o => {
+    const btn = document.createElement("button");
+    btn.className = "option";
+    btn.textContent = o;
+    btn.onclick = () => validate(o);
+    box.appendChild(btn);
+  });
+}
+
+function toggleMode() {
+  if (mode === "write") {
+    mode = "choice";
+    document.getElementById("modeBtn").textContent = "Mode: Choices";
+    document.getElementById("writingMode").classList.add("hidden");
+    document.getElementById("choiceMode").classList.remove("hidden");
+  } else {
+    mode = "write";
+    document.getElementById("modeBtn").textContent = "Mode: Writing";
+    document.getElementById("writingMode").classList.remove("hidden");
+    document.getElementById("choiceMode").classList.add("hidden");
+  }
+  newQuestion();
+}
+
+function showQuiz() {
+  document.getElementById("quiz").classList.remove("hidden");
+  document.getElementById("study").classList.add("hidden");
+  newQuestion();
+}
+
+function showStudy() {
+  document.getElementById("quiz").classList.add("hidden");
+  document.getElementById("study").classList.remove("hidden");
+
+  let html = "";
+  for (let v in verbs) {
+    html += `<h3>${v}</h3><table>`;
+    for (let i=0;i<6;i++) {
+      html += `<tr><td>${pronouns[i]}</td><td>${verbs[v][i]}</td></tr>`;
+    }
+    html += "</table>";
+  }
+  document.getElementById("study").innerHTML = html;
+}
+
+newQuestion();
+</script>
+
+</body>
+</html>
