@@ -6,15 +6,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
-
-  footer {
-  text-align: center;
-  margin-top: 20px;
-  padding-top: 10px;
-  opacity: 0.7;
-  font-size: 14px;
-}
-
 * {
   box-sizing: border-box;
   font-family: "Inter", sans-serif;
@@ -25,18 +16,23 @@ body {
   background: linear-gradient(135deg, #1d2671, #c33764);
   min-height: 100vh;
   display: flex;
-  justify-content: center;
+  flex-direction: column;  /* for footer at bottom */
   align-items: center;
   color: white;
 }
 
 .app {
   width: 95%;
-  max-width: 900px;
+  max-width: 600px;
+  min-width: 300px;
   background: rgba(255,255,255,0.12);
   backdrop-filter: blur(12px);
   border-radius: 18px;
-  padding: 25px;
+  padding: 20px;
+  margin: 20px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
 h1 {
@@ -46,7 +42,9 @@ h1 {
 #menu {
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
   margin-bottom: 15px;
+  gap: 10px;
 }
 
 button {
@@ -86,6 +84,7 @@ input {
 .controls {
   display: flex;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
 .option {
@@ -105,11 +104,33 @@ table {
   background: white;
   color: black;
   margin-bottom: 20px;
+  display: block;
+  overflow-x: auto;   /* allows horizontal scroll on small screens */
+  white-space: nowrap;
 }
 
 td, th {
   border: 1px solid #ccc;
   padding: 6px;
+}
+
+footer {
+  margin-top: auto;
+  padding: 15px 0;
+  text-align: center;
+  font-size: 14px;
+  opacity: 0.7;
+}
+
+/* Small screen adjustments */
+@media (max-width: 480px) {
+  button, input, .option {
+    font-size: 14px;
+    padding: 10px;
+  }
+  #question {
+    font-size: 22px;
+  }
 }
 </style>
 </head>
@@ -142,6 +163,10 @@ td, th {
 
   <div id="study" class="card hidden"></div>
 </div>
+
+<footer>
+  Leo Wegner
+</footer>
 
 <script>
 const pronouns = ["Je","Tu","Il/Elle","Nous","Vous","Ils/Elles"];
@@ -271,9 +296,6 @@ function showStudy() {
 
 newQuestion();
 </script>
-<footer>
-  Leo Wegner
-</footer>
 
 </body>
 </html>
